@@ -13,6 +13,7 @@ import { Post } from '../posts/posts.model';
 interface UserCreationAttrs {
   email: string;
   password: string;
+  avatar: string;
 }
 
 @Table({ tableName: "users" })
@@ -42,8 +43,12 @@ export class User extends Model<User, UserCreationAttrs> {
     example: "Banned for being rude",
     description: "A reason for user being banned",
   })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: false })
   bannedReason: string;
+
+  @ApiProperty({ example: "Avatar", description: "Avatar image" })
+  @Column({ type: DataType.STRING, allowNull: true })
+  avatar: string;
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

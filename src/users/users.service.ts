@@ -6,18 +6,21 @@ import { RolesService } from "../roles/roles.service";
 import { RolesType } from "../roles/types/rolesType";
 import { AddRoleDto } from "./dto/AddRole.dto";
 import { BanUserDto } from "./dto/BanUser.dto";
+import { UploadAvatarDto } from './dto/UploadAvatar.dto';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User)
     private userRepository: typeof User,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private filesService: FilesService
   ) {}
 
   async createUser(dto: CreateUserDto) {
     const user = await this.userRepository.create(dto);
-    const role = await this.rolesService.getRoleByValue(RolesType.USER);
+    const role = await this.rolesService.getRoleByValue(RolesType.ADMIN);
     await user.$set("roles", [role.id]);
     user.roles = [role];
 
@@ -47,6 +50,17 @@ export class UsersService {
     if (role && user) {
       await user.$add("role", role.id);
       return dto;
+    }
+    throw new HttpException("User or role not found", HttpStatus.NOT_FOUND);
+  }
+
+  async uploadAvatar(dto: UploadAvatarDto, image: any) {
+    const user = await this.userRepository.findByPk(dto.userId);
+    const fileName = await this.filesService.createFile(image);
+
+    if (user && fileName) {
+      await user.update("avatar", fileName);
+      return user;
     }
     throw new HttpException("User or role not found", HttpStatus.NOT_FOUND);
   }

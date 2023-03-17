@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, UploadedFile, UseGuards } from "@nestjs/common";
 import { CreateUserDto } from "./dto/СreateUser.dto";
 import { UsersService } from "./users.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -8,6 +8,7 @@ import { RolesType } from '../roles/types/rolesType';
 import { RolesGuard } from '../auth/roles.guard';
 import { AddRoleDto } from './dto/AddRole.dto';
 import { BanUserDto } from './dto/BanUser.dto';
+import { UploadAvatarDto } from './dto/UploadAvatar.dto';
 
 @ApiTags("Users")
 @Controller("users")
@@ -46,5 +47,14 @@ export class UsersController {
   @Post('/ban')
   Ban(@Body() dto: BanUserDto) {
     return this.userService.ban(dto);
+  }
+
+  @ApiOperation({ summary: "UploadAvatar" })
+  @ApiResponse({ status: 200 })
+  @UseGuards(RolesGuard)
+  @Post('/avatar')
+  UploadAvatar(@Body() dto: UploadAvatarDto,
+               @UploadedFile() image) {
+    return this.userService.uploadAvatar(dto, image);
   }
 }

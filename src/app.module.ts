@@ -32,6 +32,8 @@ import * as path from 'path';
       database: process.env.POSTGRES_DB,
       models: [User, Role, UserRoles, Post],
       autoLoadModels: true,
+      synchronize: true,
+
     }),
     UsersModule,
     RolesModule,

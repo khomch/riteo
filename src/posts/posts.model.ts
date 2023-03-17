@@ -35,7 +35,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
   content: string;
 
 
-  @ApiProperty({ example: "Some content", description: "Post text" })
+  @ApiProperty({ example: "Image", description: "Post image" })
   @Column({ type: DataType.STRING })
   image: string;
 
