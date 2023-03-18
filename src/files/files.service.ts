@@ -17,6 +17,7 @@ export class FilesService {
 
       return fileName;
     } catch (e) {
+      console.log(e)
       throw new HttpException(
         "Error while uploading",
         HttpStatus.INTERNAL_SERVER_ERROR
