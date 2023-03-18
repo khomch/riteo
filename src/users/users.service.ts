@@ -57,15 +57,10 @@ export class UsersService {
   async uploadAvatar(dto: UploadAvatarDto, image: any) {
     const user = await this.userRepository.findByPk(dto.userId);
     const fileName = await this.filesService.createFile(image);
-    console.log(fileName)
-
 
     if (user && fileName) {
-      // await this.userRepository.update(user, { where: {'avatar': 'asd'}})
-      // await user.update("avatar", fileName);
       user.avatar = fileName;
       await user.save();
-      console.log(user.avatar)
       return user;
     }
     throw new HttpException("User or role not found", HttpStatus.NOT_FOUND);
