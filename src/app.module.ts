@@ -33,7 +33,6 @@ import * as path from 'path';
       models: [User, Role, UserRoles, Post],
       autoLoadModels: true,
       synchronize: true,
-
     }),
     UsersModule,
     RolesModule,

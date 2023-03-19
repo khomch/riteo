@@ -35,6 +35,38 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
 
+  @ApiProperty({ example: "John", description: "First name" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  first: string;
+
+  @ApiProperty({ example: "Doe", description: "Last name" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  lastname: string;
+
+  @ApiProperty({ example: "42", description: "Age" })
+  @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: null })
+  age: number;
+
+  @ApiProperty({ example: "USD", description: "Currency" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: "USD" })
+  currency: string;
+
+  @ApiProperty({ example: "USA", description: "Country" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  country: string;
+
+  @ApiProperty({ example: "New York", description: "City" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  city: string;
+
+  @ApiProperty({ example: "johndoesuper", description: "Username" })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
+  username: string;
+
+  @ApiProperty({ example: "Avatar", description: "Avatar image" })
+  @Column({ type: DataType.STRING, allowNull: true })
+  avatar: string;
+
   @ApiProperty({ example: "true", description: "Is user banned" })
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   banned: boolean;
@@ -43,12 +75,8 @@ export class User extends Model<User, UserCreationAttrs> {
     example: "Banned for being rude",
     description: "A reason for user being banned",
   })
-  @Column({ type: DataType.STRING, allowNull: true, defaultValue: false })
+  @Column({ type: DataType.STRING, allowNull: true, defaultValue: null })
   bannedReason: string;
-
-  @ApiProperty({ example: "Avatar", description: "Avatar image" })
-  @Column({ type: DataType.STRING, allowNull: true })
-  avatar: string;
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

@@ -6,8 +6,18 @@ import { RolesService } from "../roles/roles.service";
 import { RolesType } from "../roles/types/rolesType";
 import { AddRoleDto } from "./dto/AddRole.dto";
 import { BanUserDto } from "./dto/BanUser.dto";
-import { UploadAvatarDto } from './dto/UploadAvatar.dto';
-import { FilesService } from '../files/files.service';
+import { UploadAvatarDto } from "./dto/UploadAvatar.dto";
+import { FilesService } from "../files/files.service";
+import { UpdateUserDto } from "./dto/UpdateUser.dto";
+import { JwtService } from '@nestjs/jwt';
+
+interface JwtPayload {
+  "email": string,
+  "id": number,
+  "roles": Record<any, any>[],
+  "iat": number,
+  "exp": number
+}
 
 @Injectable()
 export class UsersService {
@@ -15,7 +25,8 @@ export class UsersService {
     @InjectModel(User)
     private userRepository: typeof User,
     private rolesService: RolesService,
-    private filesService: FilesService
+    private filesService: FilesService,
+    private jwtService: JwtService
   ) {}
 
   async createUser(dto: CreateUserDto) {
@@ -32,10 +43,29 @@ export class UsersService {
     return users;
   }
 
+  async getProfile(req) {
+    const token: string = req.authorization.replace('Bearer ', '').replace(/['"]+/g, '');
+    const jwtData = await this.jwtService.decode(token) as JwtPayload;
+    const id: number = jwtData.id;
+    const user = await this.userRepository.findByPk(id);
+    return user;
+  }
+
   async getUsersByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: {
         email,
+      },
+      include: { all: true },
+    });
+
+    return user;
+  }
+
+  async getUsersByUsername(username: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
       },
       include: { all: true },
     });
@@ -52,6 +82,18 @@ export class UsersService {
       return dto;
     }
     throw new HttpException("User or role not found", HttpStatus.NOT_FOUND);
+  }
+
+  async updateUser(dto: UpdateUserDto) {
+    const user = await this.userRepository.findByPk(dto.id);
+    if (user) {
+      await user.update(
+        dto,
+        { where: { ...user } }
+      );
+      return user;
+    }
+    throw new HttpException("User not found", HttpStatus.NOT_FOUND);
   }
 
   async uploadAvatar(dto: UploadAvatarDto, image: any) {
